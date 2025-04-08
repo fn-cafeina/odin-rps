@@ -1,19 +1,29 @@
+function $(e) { return document.querySelector(e) };
+
+const hScore = $(".human-score");
+const cScore = $(".computer-score");
+const buttons = $(".buttons");
+const restartBtn = $(".restart-btn");
+const context = $(".context");
+const overlay = $(".overlay");
+
 let humanScore = 0;
 let computerScore = 0;
 
-function getHumanChoice() {
-  const option = prompt("Enter your option to play (rock, paper, scissors):");
-
-  return option.trim().toLowerCase();
-}
-
 function getComputerChoice() {
-  const option = Math.floor(Math.random() * 3);
-
-  if(option === 0) return "rock";
-  if(option === 1) return "paper";
-  if(option === 2) return "scissors";
+  return ["rock", "paper", "scissors"][Math.floor(Math.random() * 3)];
 }
+
+buttons.addEventListener("click", (e) => {
+  const humanChoice = e.target.value;
+  const computerChoice = getComputerChoice();
+
+  playRound(humanChoice, computerChoice);
+});
+
+restartBtn.addEventListener("click", () => {
+  window.location.reload();
+});
 
 function playRound(human, computer) {
   if(
@@ -22,28 +32,25 @@ function playRound(human, computer) {
     human === "scissors" && computer === "paper"
   ) {
     humanScore++;
-    console.log(`Human choice: ${human} and computer choice: ${computer}, human win!. Human score: ${humanScore}.`);
+    isWinner();
+    hScore.textContent = humanScore;
+    context.textContent = `Human choice: ${human} and computer choice: ${computer}, human win!.`;
   } else if(human === computer) {
-    console.log(`Human choice: ${human} and computer choice: ${computer}. It's a tie.`);
+    context.textContent = `Human choice: ${human} and computer choice: ${computer}. It's a tie.`;
   } else {
     computerScore++;
-    console.log(`Human choice: ${human} and computer choice: ${computer}, computer win!. Computer score: ${computerScore}.`);
+    isWinner();
+    cScore.textContent = computerScore;
+    context.textContent = `Human choice: ${human} and computer choice: ${computer}, computer win!.`;
   }
 }
 
-while(true) {
-  const humanSelection = getHumanChoice();
-  const computerSelection = getComputerChoice();
-
-  playRound(humanSelection, computerSelection);
-
+function isWinner() {
   if(humanScore === 3) {
-    console.log(`¡Human win!, Score: ${humanScore} - ${computerScore}`);
-    break;
+    overlay.style.display = "flex";
   }
 
   if(computerScore === 3) {
-    console.log(`Computer win!, Score: ${computerScore} - ${humanScore}`);
-    break;
+    overlay.style.display = "flex";
   }
 }
